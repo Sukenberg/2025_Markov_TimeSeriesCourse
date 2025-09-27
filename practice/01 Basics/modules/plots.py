@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # for visualization
 import plotly
@@ -9,48 +10,133 @@ import plotly.graph_objs as go
 plotly.offline.init_notebook_mode(connected=True)
 
 
-def plot_ts(ts_set: np.ndarray, plot_title: str = 'Input Time Series Set'):
+# def plot_ts_set(ts_set, title='Input Time Series Set'):
+#     """
+#     Plot the time series set.
+
+#     Parameters
+#     ----------
+#     ts_set : numpy.ndarrray (2d array of shape (ts_number, ts_length))
+#         Time series set.
+    
+#     title : str, default = 'Input Time Series Set'
+#         Title of plot.
+#     """
+
+#     ts_num, m = ts_set.shape
+
+#     fig = go.Figure()
+
+#     for i in range(ts_num):
+#         fig.add_trace(go.Scatter(x=np.arange(m), y=ts_set[i], line=dict(width=3), name="Time series " + str(i)))
+
+#     fig.update_xaxes(showgrid=False,
+#                      title='Time',
+#                      title_font=dict(size=22, color='black'),
+#                      linecolor='#000',
+#                      ticks="outside",
+#                      tickfont=dict(size=18, color='black'),
+#                      linewidth=2,
+#                      tickwidth=2)
+#     fig.update_yaxes(showgrid=False,
+#                      title='Values',
+#                      title_font=dict(size=22, color='black'),
+#                      linecolor='#000',
+#                      ticks="outside",
+#                      tickfont=dict(size=18, color='black'),
+#                      zeroline=False,
+#                      linewidth=2,
+#                      tickwidth=2)
+
+#     fig.update_layout(title=title,
+#                       title_font=dict(size=24, color='black'),
+#                       plot_bgcolor="rgba(0,0,0,0)",
+#                       paper_bgcolor='rgba(0,0,0,0)',
+#                       legend=dict(font=dict(size=20, color='black'))
+#                       )
+
+#     # fig.show(renderer="colab")
+#     fig.show()
+
+def plot_ts_set(ts_set, title='Input Time Series Set'):
     """
-    Plot the time series set
+    Plot the time series set using matplotlib.
+    
+    Parameters
+    ----------
+    ts_set : numpy.ndarray (2d array of shape (ts_number, ts_length))
+        Time series set.
+    
+    title : str, default = 'Input Time Series Set'
+        Title of plot.
+    """
+    
+    ts_num, m = ts_set.shape
+    
+    plt.figure(figsize=(12, 8))
+    
+    for i in range(ts_num):
+        plt.plot(np.arange(m), ts_set[i], linewidth=2, label=f"Time series {i}")
+    
+    plt.xlabel('Time', fontsize=16)
+    plt.ylabel('Values', fontsize=16)
+    plt.title(title, fontsize=18)
+    plt.legend(fontsize=12)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+def plot2d(x, y, plot_title, x_title, y_title):
+    """
+    2D Plot for different experiments.
 
     Parameters
     ----------
-    ts_set: time series set with shape (ts_number, ts_length)
-    plot_title: title of plot
-    """
+    x : numpy.ndarrray
+        Values of x axis of plot.
 
-    ts_num, m = ts_set.shape
+    y : numpy.ndarrray
+        Values of y axis of plot.
+    
+    plot_title : str
+        Title of plot.
+
+    x_title : str
+        Title of x axis of plot.
+
+    y_title : str
+        Title of y axis of plot.
+    """
 
     fig = go.Figure()
 
-    for i in range(ts_num):
-        fig.add_trace(go.Scatter(x=np.arange(m), y=ts_set[i], line=dict(width=3), name="Time series " + str(i)))
+    fig.add_trace(go.Scatter(x=x, y=y))
 
     fig.update_xaxes(showgrid=False,
-                     title='Time',
-                     title_font=dict(size=18, color='black'),
+                     title=x_title,
+                     title_font=dict(size=22, color='black'),
                      linecolor='#000',
                      ticks="outside",
-                     tickfont=dict(size=16, color='black'),
-                     linewidth=1,
-                     tickwidth=1)
+                     tickfont=dict(size=18, color='black'),
+                     linewidth=2,
+                     tickwidth=2,
+                     mirror=True)
     fig.update_yaxes(showgrid=False,
-                     title='Values',
-                     title_font=dict(size=18, color='black'),
+                     title=y_title,
+                     title_font=dict(size=22, color='black'),
                      linecolor='#000',
                      ticks="outside",
-                     tickfont=dict(size=16, color='black'),
+                     tickfont=dict(size=18, color='black'),
                      zeroline=False,
-                     linewidth=1,
-                     tickwidth=1)
+                     linewidth=2,
+                     tickwidth=2,
+                     mirror=True)
 
-    fig.update_layout(title={'text': plot_title, 'x': 0.5, 'y':0.9, 'xanchor': 'center', 'yanchor': 'top'},
-                      title_font=dict(size=18, color='black'),
+    fig.update_layout(title={'text': plot_title, 'x': 0.5, 'xanchor': 'center'},
+                      title_font=dict(size=24, color='black'),
                       plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor='rgba(0,0,0,0)',
-                      legend=dict(font=dict(size=16, color='black')),
-                      width=1000,
-                      height=400
-                      )
+                      width=700)
 
-    fig.show(renderer="colab")
+    # fig.show(renderer="colab")
+    fig.show()
