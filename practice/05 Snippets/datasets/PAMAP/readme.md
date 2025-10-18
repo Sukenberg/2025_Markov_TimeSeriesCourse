@@ -13,8 +13,8 @@ Each of the data-files contains 20 columns per row, the columns contain the foll
 -   5-7 3D-acceleration data (ms-2), scale: ±16g, resolution: 13-bit
 -   8-10 3D-acceleration data (ms-2), scale: ±6g, resolution: 13-bit
 -   11-13 3D-gyroscope data (rad/s)
--   14-16 3D-magnetometer data (μT)
--   17-20 orientation (invalid in this data collection)
+-   15-17 3D-magnetometer data (μT)
+-   18-20 orientation (invalid in this data collection)
 
 Missing sensory data due to wireless data dropping: missing values are indicated with NaN. Since data is given every 0.01s (due to the fact, that the IMUs have a sampling frequency of 100Hz), and the sampling frequency of the HR-monitor was only approximately 9Hz, the missing HR-values are also indicated with NaN in the data-files.
 
