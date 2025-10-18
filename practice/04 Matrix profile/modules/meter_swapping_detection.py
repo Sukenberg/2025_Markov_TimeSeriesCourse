@@ -11,21 +11,28 @@ plotly.offline.init_notebook_mode(connected=True)
 from modules.mp import *
 
 
-def heads_tails(consumptions: dict, cutoff, house_idx: list) -> dict, dict:
+def heads_tails(consumptions, cutoff, house_idx):
     """
-    Split time series into two parts: Head and Tail
+    Split time series into two parts: Head and Tail.
 
     Parameters
     ---------
-    consumptions: set of time series
-    cutoff: pandas.Timestamp
-        Cut-off point
-    house_idx: indices of houses
+    consumptions : dict
+        Set of time series.
+
+    cutoff : pandas.Timestamp
+        Cut-off point.
+
+    house_idx : list
+        Indices of houses.
 
     Returns
     --------
-    heads: heads of time series
-    tails: tails of time series
+    heads : dict
+        Heads of time series.
+
+    tails : dict
+        Tails of time series.
     """
 
     heads, tails = {}, {}
@@ -36,20 +43,28 @@ def heads_tails(consumptions: dict, cutoff, house_idx: list) -> dict, dict:
     return heads, tails
 
 
-def meter_swapping_detection(heads: dict, tails: dict, house_idx: dict, m: int) -> dict:
+def meter_swapping_detection(heads, tails, house_idx, m):
     """
-    Find the swapped time series pair
+    Find the swapped time series pair.
 
     Parameters
     ---------
-    heads: heads of time series
-    tails: tails of time series
-    house_idx: indices of houses
-    m: subsequence length
+    heads : dict
+        Heads of time series.
+
+    tails : dict
+        Tails of time series.
+
+    house_idx : list
+        Indices of houses.
+
+    m : int
+        Subsequence length.
 
     Returns
     --------
-    min_score: time series pair with minimum swap-score
+    min_score : dict
+       Time series pair with minimum swap-score.
     """
 
     eps = 0.001
@@ -61,16 +76,20 @@ def meter_swapping_detection(heads: dict, tails: dict, house_idx: dict, m: int) 
     return min_score
 
 
-def plot_consumptions_ts(consumptions: dict, cutoff, house_idx: list):
+def plot_consumptions_ts(consumptions, cutoff, house_idx):
     """
-    Plot a set of input time series and cutoff vertical line
+    Plot a set of input time series and cutoff vertical line.
 
     Parameters
     ---------
-    consumptions: set of time series
-    cutoff: pandas.Timestamp
-        Cut-off point
-    house_idx: indices of houses
+    consumptions : dict
+        Set of time series.
+
+    cutoff : pandas.Timestamp
+        Cut-off point.
+
+    house_idx : list
+        Indices of houses.
     """
 
     num_ts = len(consumptions)

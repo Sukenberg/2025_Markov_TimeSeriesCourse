@@ -6,24 +6,33 @@ import stumpy
 from stumpy import config
 
 
-def compute_mp(ts1: np.ndarray, m: int, exclusion_zone: int = None, ts2: np.ndarray = None):
+def compute_mp(ts1, m, exclusion_zone=None, ts2=None):
     """
-    Compute the matrix profile
+    Compute the matrix profile.
 
     Parameters
     ----------
-    ts1: the first time series
-    m: the subsequence length
-    exclusion_zone: exclusion zone
-    ts2: the second time series
+    ts1 : numpy.ndarrray
+        The first time series.
+
+    m : int
+        The subsequence length.
+
+    exclusion_zone : int, default = None
+        Exclusion zone.
+
+    ts2 : numpy.ndarrray, default = None
+        The second time series.
 
     Returns
     -------
-    output: the matrix profile structure
-            (matrix profile, matrix profile index, subsequence length, exclusion zone, the first and second time series)
+    output : dict
+        The matrix profile structure 
+        (matrix profile, matrix profile index, subsequence length, 
+        exclusion zone, the first and second time series).
     """
     
-    # INSERT YOUR CODE
+    mp = stumpy.stump(ts1, m, ts2)
 
     return {'mp': mp[:, 0],
             'mpi': mp[:, 1],

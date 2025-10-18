@@ -1,36 +1,45 @@
 import numpy as np
 
 
-def is_nan_inf(arr: np.ndarray) -> bool:
+def is_nan_inf(val):
     """
-    Check if the array contains np.nan, -np.nan, or np.inf values
+    Check if the array contains np.nan, -np.nan, or np.inf values.
 
     Parameters
     ----------
-    arr: array
+    a : numpy.ndarray
+        Array.
 
     Returns
     -------
-        flag of checking if the array contains np.nan, -np.nan, or np.inf values
+    output : bool.
     """
 
-    return np.isnan(arr) or np.isinf(abs(arr))
+    return np.isnan(val) or np.isinf(abs(val))
 
 
-def apply_exclusion_zone(a: np.ndarray, idx: int, excl_zone: int, val: float) -> np.ndarray:
+def apply_exclusion_zone(a, idx, excl_zone, val):
     """ 
-    Set all values of array to `val` in a window around a given index
+    Set all values of array to `val` in a window around a given index.  
 
     Parameters
     ----------
-    a: array
-    idx: the index around which the window should be centered
-    excl_zone: size of the exclusion zone
-    val: the elements within the exclusion zone will be set to this value
+    a : numpy.ndarray
+        Array.
+
+    idx : int
+        The index around which the window should be centered.
+
+    excl_zone : int
+        Size of the exclusion zone.
+
+    val : float
+        The elements within the exclusion zone will be set to this value.
 
     Returns
     -------
-    a: array that is applied an exclusion zone
+    a : numpy.ndarray
+        Array that is applied an exclusion zone.
     """
     
     zone_start = max(0, idx - excl_zone)
