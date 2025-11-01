@@ -1,7 +1,7 @@
 import numpy as np
 
-from modules.metrics import ED_distance, norm_ED_distance, DTW_distance
-from modules.utils import z_normalize
+from .metrics import ED_distance, norm_ED_distance, DTW_distance
+from .utils import z_normalize
 
 
 class PairwiseDistance:
@@ -47,11 +47,14 @@ class PairwiseDistance:
         dict_func: function reference
         """
 
-        dist_func = None
-
-        # INSERT YOUR CODE
-
-        return dist_func
+        if self.metric == 'euclidean':
+            return ED_distance
+        elif self.metric == 'norm_euclidean':
+            return norm_ED_distance
+        elif self.metric == 'dtw':
+            return DTW_distance
+        else:
+            raise ValueError("Unsupported metric. Choose 'euclidean', 'norm_euclidean' or 'dtw'.")
 
 
     def calculate(self, input_data: np.ndarray) -> np.ndarray:
@@ -65,10 +68,18 @@ class PairwiseDistance:
         -------
         matrix_values: distance matrix
         """
-        
+
+        if self.is_normalize and self.metric != 'norm_euclidean':
+            input_data = np.array([z_normalize(ts) for ts in input_data])
+
+        dist_func = self._choose_distance()
         matrix_shape = (input_data.shape[0], input_data.shape[0])
         matrix_values = np.zeros(shape=matrix_shape)
-        
-        # INSERT YOUR CODE
+
+        for i in range(input_data.shape[0]):
+            for j in range(i, input_data.shape[0]):
+                distance = dist_func(input_data[i], input_data[j])
+                matrix_values[i, j] = distance
+                matrix_values[j, i] = distance
 
         return matrix_values

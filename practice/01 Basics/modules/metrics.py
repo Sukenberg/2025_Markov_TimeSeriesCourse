@@ -1,131 +1,90 @@
 import numpy as np
 
 
-def ED_distance(ts1, ts2):
+def ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     """
-    Calculate the Euclidean distance.
+    Calculate the Euclidean distance
 
     Parameters
     ----------
-    ts1 : numpy.ndarray
-        The first time series.
-
-    ts2 : numpy.ndarray
-        The second time series.
+    ts1: the first time series
+    ts2: the second time series
 
     Returns
     -------
-    ed_dist : float
-        Euclidean distance between ts1 and ts2.
+    ed_dist: euclidean distance between ts1 and ts2
     """
+    
+    ed_dist = 0
 
-    if len(ts1) != len(ts2):
-        raise ValueError("The two arrays must have the same length.")
+    # INSERT YOUR CODE
 
-    ed_dist = np.sqrt(np.sum((ts1 - ts2)**2))
-
-    return ed_dist
+    return np.sqrt(np.sum((ts1 - ts2) ** 2))
 
 
-def norm_ED_distance(ts1, ts2):
+def norm_ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     """
-    Calculate the normalized Euclidean distance.
+    Calculate the normalized Euclidean distance
 
     Parameters
     ----------
-    ts1 : numpy.ndarray
-        The first time series.
-
-    ts2 : numpy.ndarray
-        The second time series.
+    ts1: the first time series
+    ts2: the second time series
 
     Returns
     -------
-    norm_ed_dist : float
-        The normalized Euclidean distance between ts1 and ts2.
+    norm_ed_dist: normalized Euclidean distance between ts1 and ts2s
     """
 
-    if len(ts1) != len(ts2):
-        raise ValueError("The two arrays must have the same length.")
+    n = len(ts1)
 
-    m = len(ts1)
+    # Вычисление среднего арифметического и стандартного отклонения для каждого ряда
+    mu_ts1 = np.mean(ts1)
+    mu_ts2 = np.mean(ts2)
+    sigma_ts1 = np.std(ts1)
+    sigma_ts2 = np.std(ts2)
 
-    norm_ed_dist = np.sqrt(abs(2*m * (1 - (np.dot(ts1, ts2) - m * (sum(ts1)/m) * (sum(ts2)/m)) / (
-        m * np.sqrt(sum(ts1**2 - (sum(ts1)/m)**2) / m) * np.sqrt(sum(ts2**2 - (sum(ts2)/m)**2) / m)))))
+    # Вычисление скалярного произведения
+    dot_product = np.dot(ts1, ts2)
+
+    # Вычисление нормализованного евклидова расстояния
+    norm_ed_dist = np.sqrt(np.abs(2 * n * (1 - (dot_product - n * mu_ts1 * mu_ts2) / (n * sigma_ts1 * sigma_ts2))))
 
     return norm_ed_dist
 
 
-def DTW_distance(ts1, ts2, r=1.0):
+def DTW_distance(ts1: np.ndarray, ts2: np.ndarray, r: float = 1) -> float:
     """
-    Calculate DTW distance.
+    Calculate DTW distance
 
     Parameters
     ----------
-    ts1 : numpy.ndarray
-        The first time series.
-
-    ts2 : numpy.ndarray
-        The second time series.
-
-    r : float
-        Warping window size.
-
+    ts1: first time series
+    ts2: second time series
+    r: warping window size
+    
     Returns
     -------
-    dtw_dist : float
-        DTW distance between ts1 and ts2.
+    dtw_dist: DTW distance between ts1 and ts2
     """
 
     n = len(ts1)
     m = len(ts2)
 
-    # Матрица расстояний
-    dtw_matrix = np.zeros((n+1, m+1))
-    dtw_matrix[:, :] = np.inf
+    # Initialize the cost matrix
+    dtw_matrix = np.full((n + 1, m + 1), np.inf)
     dtw_matrix[0, 0] = 0
 
-    # Вычисление DTW меры
-    for i in range(1, n+1):
-        for j in range(max(1, i-int(np.floor(m*r))), min(m, i+int(np.floor(m*r))) + 1):
-            cost = np.square(ts1[i-1] - ts2[j-1])
-            dtw_matrix[i, j] = cost + \
-                min(dtw_matrix[i-1, j],
-                    dtw_matrix[i, j-1],
-                    dtw_matrix[i-1, j-1])
+    # Apply the warping window size
+    window = max(int(r * max(n, m)), 1)
 
-    dtw_dist = dtw_matrix[n, m]
+    for i in range(1, n + 1):
+        for j in range(max(1, i - window), min(m + 1, i + window)):
+            cost = (ts1[i - 1] - ts2[j - 1]) ** 2
+            dtw_matrix[i, j] = cost + min(
+                dtw_matrix[i - 1, j],  # insertion
+                dtw_matrix[i, j - 1],  # deletion
+                dtw_matrix[i - 1, j - 1]  # match
+            )
 
-    return dtw_dist
-
-
-def calculate_distance_matrix(data, metric='euclidean', normalize=True):
-
-    N = data.shape[0] # number of time series
-    
-    if metric=='euclidean':
-        if normalize:
-            dist_func = norm_ED_distance
-        else:
-            dist_func = ED_distance
-    elif metric=='dtw':
-        if normalize:
-            for i in range(N):
-                data[i] = z_normalize(data[i])
-        dist_func = DTW_distance
-    else:
-        raise ValueError("Metric must be 'euclidean' or 'dtw'.")
-
-    # Initialize the distance matrix
-    distance_matrix = np.zeros(shape=(N, N))
-    
-    for i in range(N):
-        for j in range(i, N):
-            if i == j:
-                distance_matrix[i, j] = 0.0
-            else:
-                distance_matrix[i, j] = dist_func(data[i], data[j])
-    
-    distance_matrix = distance_matrix + distance_matrix.T
-
-    return distance_matrix
+    return dtw_matrix[n, m]

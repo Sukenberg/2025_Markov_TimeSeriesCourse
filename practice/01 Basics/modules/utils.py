@@ -1,21 +1,39 @@
 import numpy as np
+import pandas as pd
 import math
+import random
 
 
-def z_normalize(ts):
+def read_ts(file_path: str) -> np.ndarray:
     """
-    Calculate the z-normalized time series by subtracting the mean and
-    dividing by the standard deviation along a given axis.
+    Read time series
 
     Parameters
     ----------
-    ts : numpy.ndarray
-        Time series.
+    file_path: Path to file where time series data are stored
+     
+    Returns
+    -------
+    ts: time series data
+    """
+
+    ts = pd.read_csv(file_path, header=None, delim_whitespace=True)
+    
+    return ts.to_numpy()
+
+
+def z_normalize(ts: np.ndarray) -> np.ndarray:
+    """
+    Calculate the z-normalized time series by subtracting the mean and
+    dividing by the standard deviation along a given axis
+
+    Parameters
+    ----------
+    ts: time series
     
     Returns
     -------
-    norm_ts : numpy.ndarray
-        The z-normalized time series.
+    norm_ts: z-normalized time series
     """
 
     norm_ts = (ts - np.mean(ts, axis=0)) / np.std(ts, axis=0)
@@ -23,25 +41,19 @@ def z_normalize(ts):
     return norm_ts
 
 
-def sliding_window(ts, window, step=1):
+def sliding_window(ts: np.ndarray, window: int, step: int = 1) -> np.ndarray:
     """
-    Extract subsequences from time series using sliding window.
+    Extract subsequences from time series using sliding window
 
     Parameters
     ----------
-    ts : numpy.ndarray
-        Time series.
-
-    window : int
-        Size of the sliding window.
-
-    step : int
-        Step of the sliding window.
+    ts: time series
+    window: size of the sliding window
+    step: step of the sliding window
 
     Returns
     -------
-    subs_matrix : numpy.ndarray
-        Matrix of subsequences.
+    subs_matrix: matrix of subsequences
     """
     
     n = ts.shape[0]
@@ -57,14 +69,34 @@ def sliding_window(ts, window, step=1):
     return subs_matrix
 
 
-def random_walk(length):
-    import random
+def random_walk(n: int) -> np.ndarray:
+    """
+    Generate the time series based on Random Walk model
+
+    Parameters
+    ----------
+    n: length of time series
     
-    y = 0
-    positions = [0]
-    
-    for _ in range(length):
-        y += random.choice([-1, 1])
-        positions.append(y)
-        
-    return np.array(positions)
+    Returns
+    -------
+    random_walk_ts: generated time series
+    """
+
+    value = 0
+
+    random_walk_ts = [value]
+    directions = ["UP", "DOWN"]
+
+    for i in range(1, n):
+        # Randomly select either UP or DOWN
+        step = random.choice(directions)
+
+        # Move the object up or down
+        if step == "UP":
+            value += 1
+        elif step == "DOWN":
+            value -= 1
+
+        random_walk_ts.append(value)
+
+    return np.array(random_walk_ts)

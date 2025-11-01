@@ -68,22 +68,36 @@ class BestMatchPredictor:
         return predict_values
 
 
-    def predict(self, ts: np.ndarray, query: np.ndarray) -> np.array:
-        """
-        Predict time series at future horizon
-        
-        Parameters
-        ----------
-        ts: time series
-        query: query, shorter than time series
+    def predict_forecast(ts, query, h, match_alg, match_alg_params, aggr_func='average'):
+        predict_values = np.zeros((h,))
 
-        Returns
-        -------
-        predict_values: prediction values
-        """
+        # Находим topK похожих подпоследовательностей
+        if match_alg == 'MASS':
+            # Используем MASS для поиска похожих подпоследовательностей
+            distances = mts.mass(ts, query)
+            # Получаем topK индексов из расстояний
+            topK = match_alg_params['topK']
+            best_indices = np.argsort(distances)[:topK]
 
-        predict_values = np.zeros((self.h,))
+        print(f"Найдены индексы {match_alg}: {best_indices}")
 
-        # INSERT YOUR CODE
-        
+        # Собираем значения, которые следуют за найденными подпоследовательностями
+        topK_subs_predict_values = []
+        for idx in best_indices:
+            # Проверяем, что после подпоследовательности есть достаточно значений для горизонта прогнозирования
+            end_idx = idx + len(query)
+            if end_idx + h <= len(ts):
+                future_values = ts[end_idx:end_idx + h]
+                topK_subs_predict_values.append(future_values)
+                print(f"Индекс {idx}: будущие значения {future_values[:3]}... (среднее: {np.mean(future_values):.2f})")
+
+        # Если нашли хотя бы одну подпоследовательность с будущими значениями
+        if topK_subs_predict_values:
+            topK_subs_predict_values = np.array(topK_subs_predict_values)
+            print(f"Собрано {len(topK_subs_predict_values)} последовательностей")
+            # Применяем агрегатную функцию для получения прогноза
+            predict_values = topK_subs_predict_values.mean(axis=0)
+        else:
+            print("Не найдено подходящих подпоследовательностей с будущими значениями")
+
         return predict_values
